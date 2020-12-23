@@ -33,8 +33,8 @@
 #include "WiFi.h"
 #include <PubSubClient.h>
 const char* mqtt_server = "mqtt.eclipseprojects.io";
-const char* ssid = "REPLACE_WITH_YOUR_SSID";
-const char* password = "REPLACE_WITH_YOUR_PASSWORD";
+const char* ssid = "XXX";
+const char* password = "XXX";
 
 WiFiClient espClient;
 PubSubClient client(espClient);
@@ -199,8 +199,8 @@ void callback(char* topic, byte* message, unsigned int length) {
   /*for (int i = 0; i < length; i++) {
     Serial.print((char)message[i]);
     messageTemp += (char)message[i];
-  }
-  Serial.println();*/
+    }
+    Serial.println();*/
 
   // Feel free to add more if statements to control more GPIOs with MQTT
 
@@ -208,7 +208,11 @@ void callback(char* topic, byte* message, unsigned int length) {
   // Changes the output state according to the message
   if (String(topic) == "p1") {
 
-      speed1 += ACEL;
+    speed1 += ACEL;
+
+  } if (String(topic) == "p2") {
+
+    speed2 += ACEL;
 
   }
 }
@@ -222,6 +226,7 @@ void reconnect() {
       Serial.println("connected");
       // Subscribe
       client.subscribe("p1");
+      client.subscribe("p2");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -417,7 +422,7 @@ void loop() {
     reconnect();
   }
   client.loop();
-  
+
   for (int i = 0; i < NPIXELS; i++) {
     track.setPixelColor(i, track.Color(0, 0, 0));
   };
@@ -430,13 +435,13 @@ void loop() {
     };
   };
 
- /* if ( (flag_sw1 == 1) && (A != A_ant) ) {
-    flag_sw1 = 0;
-    speed1 += ACEL;
-  };
-  if ( (flag_sw1 == 0) && (A == A_ant) ) {
-    flag_sw1 = 1;
-  };*/
+  /* if ( (flag_sw1 == 1) && (A != A_ant) ) {
+     flag_sw1 = 0;
+     speed1 += ACEL;
+    };
+    if ( (flag_sw1 == 0) && (A == A_ant) ) {
+     flag_sw1 = 1;
+    };*/
 
   if ((gravity_map[(word)dist1 % NPIXELS]) < 127) speed1 -= kg * (127 - (gravity_map[(word)dist1 % NPIXELS]));
   if ((gravity_map[(word)dist1 % NPIXELS]) > 127) speed1 += kg * ((gravity_map[(word)dist1 % NPIXELS]) - 127);
